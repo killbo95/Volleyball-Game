@@ -36,17 +36,17 @@ kbd{background:#24345c;border:1px solid #52689b;border-bottom-width:3px;border-r
 </style>
 <style>
 /* Studio opening sequence */
-#studioIntro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 48%,#172b50 0%,#0a1226 48%,#030711 100%);opacity:1;visibility:visible;transition:opacity 1.8s ease,visibility 1.8s ease}
+#studioIntro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 48%,#172b50 0%,#0a1226 48%,#030711 100%);opacity:1;visibility:visible;transition:opacity 2.6s ease,visibility 2.6s ease}
 #studioIntro.done{opacity:0;visibility:hidden;pointer-events:none}
 #studioIntro:before{content:"";position:absolute;width:min(72vw,680px);aspect-ratio:1;border:1px solid #6cebe522;border-radius:50%;box-shadow:0 0 90px #65e6df12,inset 0 0 90px #65e6df0a;animation:introOrbit 18s linear infinite}
 #studioIntro:after{content:"";position:absolute;width:min(52vw,480px);aspect-ratio:1;border:1px solid #ff719d20;border-radius:50%;animation:introOrbit 25s linear infinite reverse}
 .intro-content{position:relative;z-index:1;text-align:center;padding:24px;width:min(92vw,700px)}
-.intro-mark{width:68px;height:68px;margin:0 auto 26px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(140deg,#65e6df,#3384b5);color:#071326;font-size:25px;font-weight:1000;letter-spacing:-2px;box-shadow:0 0 55px #65e6df44;opacity:0;transform:translateY(12px) scale(.9);animation:introMark 1s .35s ease forwards}
+.intro-mark{width:68px;height:68px;margin:0 auto 26px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(140deg,#65e6df,#3384b5);color:#071326;font-size:25px;font-weight:1000;letter-spacing:-2px;box-shadow:0 0 55px #65e6df44;opacity:0;transform:translateY(12px) scale(.9);animation:introMark 1.6s .6s ease forwards}
 .intro-credit{position:absolute;left:0;right:0;top:50%;transform:translateY(18px);opacity:0;color:#f5f7ff;font-size:clamp(23px,5vw,43px);font-weight:950;letter-spacing:clamp(2px,.65vw,7px);text-transform:uppercase;text-shadow:0 0 30px #65e6df28;white-space:normal}
 .intro-credit small{display:block;font-size:10px;letter-spacing:4px;color:#86a0c8;margin-bottom:15px;font-weight:800}
-.intro-credit.show{animation:creditFade 2.45s ease both}
+.intro-credit.show{animation:creditFade 4.2s ease both}
 .intro-credit.final{color:#8af2e9}
-.intro-line{width:0;height:2px;margin:105px auto 0;background:linear-gradient(90deg,transparent,#65e6df,transparent);animation:introLine 1.5s 1.2s ease forwards}
+.intro-line{width:0;height:2px;margin:105px auto 0;background:linear-gradient(90deg,transparent,#65e6df,transparent);animation:introLine 2.2s 1.8s ease forwards}
 .intro-skip{position:absolute;right:24px;bottom:22px;color:#8294b7;font-size:9px;letter-spacing:2px;font-weight:800}
 @keyframes introMark{to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes creditFade{0%{opacity:0;transform:translateY(24px);filter:blur(8px)}18%,72%{opacity:1;transform:translateY(0);filter:blur(0)}100%{opacity:0;transform:translateY(-16px);filter:blur(5px)}}
@@ -81,10 +81,10 @@ kbd{background:#24345c;border:1px solid #52689b;border-bottom-width:3px;border-r
    if(index===3)credit.classList.add('final');
    credit.classList.add('show');
    index++;
-   if(index<credits.length)setTimeout(showNext,2700);
-   else setTimeout(()=>{intro.classList.add('done');setTimeout(()=>intro.remove(),1900)},2900);
+   if(index<credits.length)setTimeout(showNext,4700);
+   else setTimeout(()=>{intro.classList.add('done');setTimeout(()=>intro.remove(),2700)},4700);
  };
- setTimeout(showNext,1100);
+ setTimeout(showNext,1800);
 })();
 </script></head>
 <body><main class="app-shell">
