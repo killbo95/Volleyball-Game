@@ -325,19 +325,66 @@ button.secondary{background:linear-gradient(180deg,#334e6b,#1c304b);color:#e8f7f
 }
 #lobbyScreen .player-one .avatar{overflow:visible}
 </style>
+<style id="anime-lobby-redesign">
+#lobbyScreen.anime-lobby{position:relative;isolation:isolate;overflow:hidden;min-height:calc(100vh - 24px);height:calc(100vh - 24px);max-height:1000px;margin:0;padding:0;background:radial-gradient(ellipse at 52% 38%,#39445c 0,#20283d 42%,#111827 82%);border:0;color:#f5f4f7}
+#lobbyScreen.anime-lobby:before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,#0d1429aa 0%,#17213933 48%,#10172699 100%),repeating-linear-gradient(105deg,transparent 0 130px,#aab5c51a 132px 135px,transparent 137px 260px),radial-gradient(ellipse at 50% 100%,#bd805e 0,#533d43 34%,transparent 70%)}
+#lobbyScreen.anime-lobby:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,#090f20a8,transparent 24%,transparent 76%,#090f20a8),linear-gradient(0deg,#080d19aa,transparent 30%)}
+.app-shell:has(#lobbyScreen.anime-lobby)>.topbar{display:none}
+#lobbyScreen .anime-credits{position:absolute;z-index:4;left:26px;top:18px;display:flex;flex-direction:column;gap:4px;font-size:clamp(9px,1.1vw,15px);font-style:italic;letter-spacing:.5px;color:#c6c8d1}
+#lobbyScreen .anime-credits i{width:70px;border-top:1px solid #b8bdc9;margin:5px 0}
+#lobbyScreen .anime-credits strong{color:#f2edf2;font-size:1.05em}
+#lobbyScreen .anime-logo{position:absolute;right:4%;top:3%;font-size:clamp(28px,5vw,68px);font-weight:1000;font-style:italic;letter-spacing:-3px;line-height:.82;text-align:right;transform:skew(-8deg);text-shadow:0 5px 18px #0008}
+#lobbyScreen .anime-logo em{display:block;color:#ed4387;font-size:1.05em}
+#lobbyScreen .anime-logo span{color:#e6eaf2;font-size:.55em;vertical-align:top}
+#lobbyScreen .anime-arena-title{position:absolute;top:20%;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:5px;color:#d8dce8a8;white-space:nowrap}
+#lobbyScreen .anime-hero{position:absolute;inset:0;display:flex;justify-content:center;align-items:flex-start;pointer-events:none}
+#lobbyScreen .anime-hero-character{position:absolute;top:4%;left:50%;transform:translateX(-50%);width:min(52vw,610px);height:78%;display:flex;justify-content:center;align-items:flex-start}
+#lobbyScreen .anime-hero-character .lobby-character{width:100%!important;height:100%!important;transform:none!important;background-image:url("https://image.pngaaa.com/703/1060703-middle.png")!important;background-size:contain!important;background-position:center top!important;background-repeat:no-repeat!important;filter:drop-shadow(0 16px 22px #05081299)}
+#lobbyScreen .anime-character-name{position:absolute;top:62%;left:calc(50% - 275px);font-size:14px;font-weight:900;color:#fff;text-shadow:0 2px 8px #000}
+#lobbyScreen .anime-character-name span{display:block;font-size:8px;letter-spacing:2px;color:#c5c8d3}
+#lobbyScreen .anime-private{position:absolute;z-index:6;left:24px;top:53%;width:min(350px,26vw);color:white}
+#lobbyScreen .anime-private>summary,#lobbyScreen .anime-chat>summary{list-style:none;cursor:pointer;border:1px solid #d8deec88;background:#111827bb;padding:16px 20px;font-size:clamp(12px,1.4vw,19px);font-weight:900;font-style:italic;letter-spacing:1px}
+#lobbyScreen .anime-private>summary::-webkit-details-marker,#lobbyScreen .anime-chat>summary::-webkit-details-marker{display:none}
+#lobbyScreen .anime-private>summary span{float:right;font-size:25px;line-height:15px}
+#lobbyScreen .anime-private[open] .online-panel{background:#111827f2;border:1px solid #9ba6bb;padding:15px;max-height:260px;overflow:auto}
+#lobbyScreen .anime-roster{position:absolute;z-index:5;left:50%;bottom:17%;transform:translateX(-50%);display:flex;align-items:center;gap:7px}
+#lobbyScreen .roster-arrow{border:0;background:transparent;color:#fff;font-size:42px;padding:0 10px;cursor:pointer}
+#lobbyScreen .roster-card{width:clamp(54px,7vw,112px);height:clamp(64px,8.4vw,126px);padding:0;border:2px solid #c4c8d488;background:linear-gradient(145deg,#414355,#151b2b);cursor:pointer;overflow:hidden}
+#lobbyScreen .roster-card span{display:block;width:100%;height:100%;background-image:url("https://image.pngaaa.com/703/1060703-middle.png");background-size:330% auto;background-position:50% 12%;background-repeat:no-repeat}
+#lobbyScreen .roster-card:nth-of-type(3) span{filter:hue-rotate(165deg)}
+#lobbyScreen .roster-card:nth-of-type(4) span{filter:sepia(.5) saturate(.8)}
+#lobbyScreen .roster-card:nth-of-type(5) span{filter:grayscale(.7)}
+#lobbyScreen .roster-card.selected{border:3px solid #ffb35f;box-shadow:0 0 17px #ff9f45}
+#lobbyScreen .anime-skin-select{position:absolute;left:-9999px}
+#lobbyScreen .anime-play{position:absolute;z-index:7;left:50%;bottom:4%;transform:translateX(-50%) skew(-7deg);width:min(590px,46vw);height:clamp(62px,9vw,105px);border:2px solid #e9a65d;background:linear-gradient(110deg,#171923f5,#24202af5);color:white;font-size:clamp(24px,3.5vw,48px);font-weight:1000;font-style:italic;letter-spacing:1px;box-shadow:0 12px 35px #0009;cursor:pointer}
+#lobbyScreen .anime-play span{position:absolute;right:6%;font-size:1.3em}
+#lobbyScreen .anime-chat{position:absolute;z-index:6;left:16px;bottom:5%;width:min(255px,20vw);color:#fff}
+#lobbyScreen .anime-chat>summary{padding:12px 17px}
+#lobbyScreen .anime-chat #chatLog,#lobbyScreen .anime-chat .chat-row{background:#111827ed;padding:10px}
+#lobbyScreen .anime-footer{position:absolute;right:24px;bottom:18px;font-size:9px;letter-spacing:3px;color:#d9dce5aa}
+#lobbyScreen .anime-footer span{color:#ed4387}
+@media(max-width:650px){#lobbyScreen.anime-lobby{height:calc(100svh - 12px);min-height:620px}#lobbyScreen .anime-logo{top:16%;right:5%;font-size:34px}#lobbyScreen .anime-credits{font-size:9px;left:12px;top:12px}#lobbyScreen .anime-hero-character{top:20%;width:95vw;height:54%}#lobbyScreen .anime-arena-title{top:14%;font-size:7px;letter-spacing:2px}#lobbyScreen .anime-private{top:auto;bottom:25%;left:10px;width:40vw}#lobbyScreen .anime-private>summary{padding:10px;font-size:11px}#lobbyScreen .anime-roster{bottom:13%;gap:3px}#lobbyScreen .roster-card{width:12vw;height:14vw}#lobbyScreen .roster-arrow{font-size:25px;padding:0 2px}#lobbyScreen .anime-play{bottom:3%;width:72vw;height:58px;font-size:24px}#lobbyScreen .anime-chat{left:auto;right:10px;bottom:25%;width:35vw}#lobbyScreen .anime-chat>summary{padding:10px;font-size:11px}#lobbyScreen .anime-character-name{top:61%;left:8%;font-size:11px}}
+</style>
 </head>
 <body><main class="app-shell">
 <header class="topbar"><div class="brand"><div class="brand-mark">VC</div><div><h1>VOLLEY <span>CLASH</span></h1><div class="sub">THE NEXT POINT IS YOURS</div></div></div><div class="top-meta"><i></i> ARCADE VOLLEYBALL <b>SEASON 01</b></div></header>
-<section id="lobbyScreen">
-<div class="lobby-heading"><div><div class="eyebrow">NATIONAL HIGH SCHOOL LEAGUE</div><h2>READY TO <em>SPIKE?</em></h2><p>SELECT YOUR PLAYER  ·  STEP ONTO THE COURT  ·  TAKE THE WIN</p></div><div class="rank-chip">★ <span><b>ROOKIE</b><small>PLAYER RANK</small></span></div></div>
-<div class="lobby-stage">
-<div class="player-card player-one"><div class="card-top"><span>PLAYER 01</span><b>LOCAL</b></div><div class="avatar avatar-blue"><div class="lobby-character" id="lobbyChar1"></div><span class="character-aura"></span></div><h3>BLUE STRIKER</h3><small>POWER HITTER</small><label for="p1skin">CHOOSE YOUR PLAYER</label><select id="p1skin"><option value="0">Blue hero</option><option value="1">Pink hero</option><option value="2">Green hero</option><option value="3">Orange hero</option><option value="4">Purple hero</option></select></div>
-<div class="versus"><b>VS</b><div class="mini-court"><i></i><span>●</span></div><small>1 VS 1<br>VOLLEYBALL</small></div>
-<div class="player-card player-two"><div class="card-top"><span>PLAYER 02</span><b>OPPONENT</b></div><div class="avatar avatar-pink"><div class="lobby-character" id="lobbyChar2"></div><span class="character-aura"></span></div><h3>PINK ACE</h3><small>QUICK DEFENDER</small><label for="p2skin">CHOOSE YOUR PLAYER</label><select id="p2skin"><option value="0">Blue hero</option><option value="1" selected>Pink hero</option><option value="2">Green hero</option><option value="3">Orange hero</option><option value="4">Purple hero</option></select></div>
+<section id="lobbyScreen" class="anime-lobby">
+<div class="anime-credits"><b>MADE BY KILLBO</b><b>BY AMB STUDIOS</b><b>MADE BY RUBICS DEV</b><i></i><strong>SUPPORTED BY LAZZIZ SIGNATURE</strong></div>
+<div class="anime-logo">VOLLEY <em>CLASH</em><span>◉</span></div>
+<div class="anime-arena-title">NATIONAL VOLLEYBALL CHAMPIONSHIP</div>
+<div class="anime-hero">
+  <div class="anime-hero-character"><div class="lobby-character" id="lobbyChar1"></div></div>
+  <div class="anime-character-name">#10 <span>THE WILDCARD</span></div>
 </div>
-<div class="lobby-bottom"><section class="panel settings main-play-panel"><div class="match-rules"><div class="rule"><span>MODE</span><b>LOCAL 1 VS 1</b></div><div class="rule"><span>POINT LIMIT</span><b>7 POINTS</b></div><div class="rule"><span>WIN CONDITION</span><b>WIN BY 2</b></div><div class="rule"><span>COURT</span><b>INDOOR ARENA</b></div></div><button id="lobbyPlay" class="launch">PLAY MATCH <span>➜</span></button><small class="note">TWO PLAYERS · ONE KEYBOARD</small></section></div>
-<details class="online-drawer"><summary>PRIVATE ROOM <span>INVITE A FRIEND ONLINE　＋</span></summary><section class="panel online-panel"><div class="panel-head">ONLINE MATCH <small>CREATE A ROOM OR JOIN WITH A CODE</small></div><div class="room-actions"><button id="hostBtn">CREATE ROOM</button><input id="joinCode" placeholder="ROOM CODE"><button id="joinBtn" class="secondary">JOIN</button></div><div id="roomStatus">Create a room and share its code with a friend.</div><div id="roomCode"></div><div class="room-actions"><button id="onlineStart" disabled>START ONLINE MATCH</button><button id="leaveBtn" class="secondary">LEAVE</button></div></section></details>
-<details class="chat-panel"><summary>ROOM CHAT <span>OPEN CHAT　＋</span></summary><div id="chatLog">Chat appears here when someone joins your room.</div><div class="chat-row"><input id="chatInput" maxlength="180" placeholder="Message your opponent"><button id="sendChat">SEND</button></div></details>
+<details class="online-drawer anime-private"><summary>PRIVATE ROOM <span>›</span></summary><section class="panel online-panel"><div class="panel-head">ONLINE MATCH <small>CREATE A ROOM OR JOIN WITH A CODE</small></div><div class="room-actions"><button id="hostBtn">CREATE ROOM</button><input id="joinCode" placeholder="ROOM CODE"><button id="joinBtn" class="secondary">JOIN</button></div><div id="roomStatus">Create a room and share its code with a friend.</div><div id="roomCode"></div><div class="room-actions"><button id="onlineStart" disabled>START ONLINE MATCH</button><button id="leaveBtn" class="secondary">LEAVE</button></div></section></details>
+<div class="anime-roster"><button class="roster-arrow" type="button" aria-label="Previous character">‹</button>
+<button class="roster-card selected" type="button" data-skin="0" aria-label="Select character 1"><span></span></button><button class="roster-card " type="button" data-skin="1" aria-label="Select character 2"><span></span></button><button class="roster-card " type="button" data-skin="2" aria-label="Select character 3"><span></span></button><button class="roster-card " type="button" data-skin="3" aria-label="Select character 4"><span></span></button><button class="roster-card " type="button" data-skin="4" aria-label="Select character 5"><span></span></button>
+<button class="roster-arrow" type="button" aria-label="Next character">›</button></div>
+<select id="p1skin" class="anime-skin-select" aria-label="Choose character"><option value="0">Orange-haired player</option><option value="1">Dark-haired player</option><option value="2">Blond player</option><option value="3">Brown-haired player</option><option value="4">Silver-haired player</option></select>
+<select id="p2skin" hidden><option value="0">Blue hero</option><option value="1" selected>Pink hero</option><option value="2">Green hero</option><option value="3">Orange hero</option><option value="4">Purple hero</option></select>
+<button id="lobbyPlay" class="anime-play">PLAY MATCH <span>›</span></button>
+<details class="chat-panel anime-chat"><summary>●　CHAT</summary><div id="chatLog">Chat appears here when someone joins your room.</div><div class="chat-row"><input id="chatInput" maxlength="180" placeholder="Message your opponent"><button id="sendChat">SEND</button></div></details>
+<div class="anime-footer">VOLLEY CLASH <span>·</span> SEASON 01</div>
 </section>
 <div class="gamebox" id="gamebox" style="display:none"><canvas id="game" width="960" height="540" aria-label="2D volleyball game"></canvas><div class="overlay" id="overlay" style="display:none"><div class="modal"><h2 id="modalTitle">Ready to serve?</h2><p id="modalText">Jump, bump and spike your way to victory.</p><div class="actions"><button id="startBtn">START MATCH</button><button class="secondary" id="howBtn">HOW TO PLAY</button></div></div></div><div class="below"><section class="card"><h3>PLAYER 1 · BLUE</h3><div class="keys"><kbd>A</kbd><kbd>D</kbd> move <kbd>W</kbd> jump <kbd>F</kbd> hit</div></section><section class="card"><h3>PLAYER 2 · PINK</h3><div class="keys"><kbd>←</kbd><kbd>→</kbd> move <kbd>↑</kbd> jump <kbd>/</kbd> hit</div></section></div></div>
 </main>
@@ -362,6 +409,7 @@ function start(){document.getElementById('lobbyScreen').style.display='none';doc
 document.getElementById('startBtn').onclick=start;document.getElementById('lobbyPlay').onclick=start;
 function updateLobbyCharacters(){document.getElementById('lobbyChar1').style.setProperty('--skin',players[0].skin);document.getElementById('lobbyChar2').style.setProperty('--skin',players[1].skin)}
 document.getElementById('p1skin').addEventListener('change',e=>{players[0].skin=Number(e.target.value);updateLobbyCharacters()});
+document.querySelectorAll('#lobbyScreen .roster-card').forEach(card=>card.addEventListener('click',()=>{const skin=Number(card.dataset.skin);document.getElementById('p1skin').value=String(skin);players[0].skin=skin;updateLobbyCharacters();document.querySelectorAll('#lobbyScreen .roster-card').forEach(x=>x.classList.toggle('selected',x===card))}));
 document.getElementById('p2skin').addEventListener('change',e=>{players[1].skin=Number(e.target.value);updateLobbyCharacters();if(netRole==='host'&&conn)conn.send({type:'skin',skin:players[1].skin})});
 updateLobbyCharacters();
 const statusEl=document.getElementById('roomStatus'),codeEl=document.getElementById('roomCode'),chatLog=document.getElementById('chatLog');
