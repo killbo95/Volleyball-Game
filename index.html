@@ -60,7 +60,7 @@ const ball={x:300,y:220,vx:4,vy:-2,r:15,spin:0};
 function resetBall(side){serveSide=side;ball.x=side===0?270:690;ball.y=245;ball.vx=side===0?4.2:-4.2;ball.vy=-5.2;ball.spin=0}
 function resetPlayers(){players[0].x=235;players[1].x=725;for(const p of players){p.y=FLOOR-p.r*2;p.vx=p.vy=0;p.onGround=true;p.hitTimer=0}}
 function show(title,text,button='PLAY AGAIN'){document.getElementById('modalTitle').textContent=title;document.getElementById('modalText').textContent=text;document.getElementById('startBtn').textContent=button;overlay.style.display='grid'}
-function start(){if(matchOver){score=[0,0];matchOver=false}resetPlayers();resetBall(serveSide);running=true;paused=false;overlay.style.display='none';last=performance.now()}
+function start(){if(matchOver){score=[0,0];matchOver=false}resetPlayers();resetBall(serveSide);running=true;paused=false;overlay.style.display='none';last=performance.now();if(netRole==='host'&&conn&&conn.open)conn.send({type:'start'})}
 document.getElementById('startBtn').onclick=start;
 document.getElementById('p1skin').addEventListener('change',e=>players[0].skin=Number(e.target.value));
 document.getElementById('p2skin').addEventListener('change',e=>{players[1].skin=Number(e.target.value);if(netRole==='host'&&conn)conn.send({type:'skin',skin:players[1].skin})});
@@ -132,7 +132,7 @@ function update(dt){
  if(ball.y+ball.r>=FLOOR){let winner=ball.x<NET_X?1:0;point(winner)}
  if(ball.y<0){ball.y=ball.r;ball.vy=Math.abs(ball.vy)*.7}
 }
-function loop(t){if(!running){draw();requestAnimationFrame(loop);return}let dt=t-last;last=t;if(!paused&&netRole!=='guest')update(dt);if(netRole==='host'&&t-lastSync>55){syncState();lastSync=t}draw();requestAnimationFrame(loop)}
+function loop(t){if(!running){if(netRole==='host'&&t-lastSync>55){syncState();lastSync=t}draw();requestAnimationFrame(loop);return}let dt=t-last;last=t;if(!paused&&netRole!=='guest')update(dt);if(netRole==='host'&&t-lastSync>55){syncState();lastSync=t}draw();requestAnimationFrame(loop)}
 draw();requestAnimationFrame(loop);
 })();
 </script>
