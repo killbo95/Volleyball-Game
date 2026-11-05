@@ -115,7 +115,7 @@ body{background:radial-gradient(ellipse at 50% 18%,#28466d 0,#111d38 48%,#070d1c
   '<small>AN ORIGINAL GAME</small>MADE BY KILLBO',
   '<small>PRODUCTION STUDIO</small>BY AMB STUDIOS',
   '<small>GAME DEVELOPMENT</small>MADE BY RUBICS DEV',
-
+  '<small>SPECIAL THANKS</small>SUPPORTED BY LAZZIZ SIGNATURE'
  ];
  let index=0;
  const showNext=()=>{
@@ -260,6 +260,56 @@ button.secondary{background:linear-gradient(180deg,#334e6b,#1c304b);color:#e8f7f
  .main-play-panel{grid-template-columns:1fr;grid-template-areas:"rules" "play" "note";gap:12px}
  .match-rules{justify-content:space-between;gap:12px}
  .main-play-panel .launch{width:100%}
+}
+</style>
+
+<style id="center-character-menu">
+/* Original anime-volleyball menu: one featured athlete, compact actions around the stage */
+#lobbyScreen{position:relative;isolation:isolate}
+#lobbyScreen .lobby-heading{max-width:900px;margin:0 auto 4px}
+#lobbyScreen .lobby-stage{
+ display:flex!important;justify-content:center;align-items:center;position:relative;
+ min-height:clamp(350px,48vw,490px);padding:8px 16px 18px!important;overflow:hidden;
+ background:radial-gradient(ellipse at 50% 72%,#4ca9c844 0,transparent 42%),
+ linear-gradient(180deg,#07132122,#06101c99);
+ border:1px solid #9fd5ee22;border-radius:18px;
+}
+#lobbyScreen .player-two,#lobbyScreen .versus{display:none!important}
+#lobbyScreen .player-one{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ width:min(100%,360px);min-height:0;padding:8px 18px 12px!important;
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ text-align:center;position:relative;z-index:2;
+}
+#lobbyScreen .player-one .card-top{width:100%;max-width:270px;justify-content:space-between}
+#lobbyScreen .player-one .avatar{
+ width:clamp(190px,27vw,270px);height:clamp(205px,29vw,290px);
+ margin:0 auto 2px;position:relative;overflow:visible;
+ background:radial-gradient(ellipse at 50% 80%,#75eaff44,transparent 67%)!important;
+ border:0!important;box-shadow:none!important;
+}
+#lobbyScreen .player-one .lobby-character{transform:scale(1.45)!important;transform-origin:bottom center}
+#lobbyScreen .player-one .character-aura{transform:scale(1.35)}
+#lobbyScreen .player-one h3{font-size:clamp(17px,2.4vw,23px);letter-spacing:2px;margin:2px 0}
+#lobbyScreen .player-one>small{font-size:9px;letter-spacing:3px}
+#lobbyScreen .player-one label{margin-top:10px;font-size:8px;letter-spacing:2px;color:#9fc8df}
+#lobbyScreen .player-one select{width:190px;max-width:80%;padding:9px 12px;border:1px solid #80d9e777;border-radius:6px;background:#10263a;color:#eafaff;text-align:center}
+#lobbyScreen .lobby-bottom{max-width:650px;margin:10px auto 0}
+#lobbyScreen .main-play-panel{
+ display:flex;flex-direction:column;gap:9px;padding:12px 18px!important;
+ border:1px solid #8be9e766;border-radius:10px;background:#0b1b2beF;
+}
+#lobbyScreen .match-rules{justify-content:center;gap:clamp(12px,3vw,28px)}
+#lobbyScreen .main-play-panel .launch{width:min(100%,330px);min-height:48px}
+#lobbyScreen .main-play-panel .note{font-size:8px}
+#lobbyScreen .online-drawer,#lobbyScreen .chat-panel{max-width:650px}
+@media(max-width:600px){
+ #lobbyScreen .lobby-heading{padding:0 4px}
+ #lobbyScreen .lobby-stage{min-height:340px}
+ #lobbyScreen .player-one .avatar{width:190px;height:205px}
+ #lobbyScreen .player-one .lobby-character{transform:scale(1.15)!important}
+ #lobbyScreen .match-rules{gap:10px 16px}
+ #lobbyScreen .match-rules .rule b{font-size:9px}
 }
 </style>
 </head>
