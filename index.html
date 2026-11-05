@@ -130,18 +130,119 @@ body{background:radial-gradient(ellipse at 50% 18%,#28466d 0,#111d38 48%,#070d1c
  };
  setTimeout(showNext,1800);
 })();
-</script></head>
+</script>
+<style id="game-presentation-overhaul">
+/* Full-screen anime volleyball game presentation */
+:root{--cyan:#8af7ee;--pink:#ff86ad;--gold:#ffd58a}
+html{background:#080e1c}
+body{position:relative;isolation:isolate;display:block!important;min-height:100vh;overflow-x:hidden;padding:0!important;background:#080e1c!important;font-family:Arial,Helvetica,sans-serif}
+body:before{content:"";position:fixed;z-index:-2;inset:0;background:
+radial-gradient(ellipse at 50% 32%,#536d8c44 0,transparent 38%),
+radial-gradient(ellipse at 50% 0,#294b70 0,transparent 58%),
+linear-gradient(180deg,#101d34 0%,#17243a 44%,#11192a 65%,#080e1b 100%)}
+body:after{content:"";position:fixed;z-index:-1;left:-10%;right:-10%;bottom:-23vh;height:58vh;transform:perspective(480px) rotateX(54deg);transform-origin:top center;background:
+repeating-linear-gradient(90deg,transparent 0 11.9%,#d6e6f322 12% 12.15%,transparent 12.25% 24%),
+repeating-linear-gradient(0deg,transparent 0 22%,#d6e6f31b 22.2% 22.5%,transparent 22.8% 44%),
+linear-gradient(180deg,#bb875d88,#422c35aa);border-top:3px solid #f7d8a466;box-shadow:0 -25px 90px #9cc8ec20}
+.app-shell{position:relative;z-index:1;width:100%;max-width:1540px;margin:0 auto;padding:24px clamp(14px,4vw,58px) 44px}
+.topbar{height:58px;border:0;border-bottom:1px solid #b8d4e52b;padding:0 4px 14px;margin-bottom:24px}
+.brand-mark{width:48px;height:48px;border-radius:4px 13px 4px 13px;background:linear-gradient(145deg,#c2fff7,#39b9d0 55%,#1e648b);box-shadow:0 0 30px #6ce9e455,0 5px 0 #15334b;color:#071525;font-size:17px;font-style:italic;transform:skew(-5deg)}
+.brand h1{font-size:20px;letter-spacing:2.5px;font-weight:1000;text-shadow:0 3px 16px #0009}
+.brand .sub{font-size:8px;letter-spacing:4px;color:#a8c5d9}
+.top-meta{font-size:9px;letter-spacing:2px;color:#d2e2f0}
+.top-meta i{box-shadow:0 0 12px #6ce6a8}
+.top-meta b{border-radius:3px;background:#ffffff0b}
+.lobby-heading{min-height:112px;padding:10px 5px 20px;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
+.lobby-heading:after{right:5%;top:-60px;width:250px;height:250px;border-color:#a5d7f51b;box-shadow:0 0 0 28px #a5d7f508,0 0 0 58px #a5d7f505}
+.eyebrow{font-size:10px;letter-spacing:5px;color:#9dece9;text-shadow:0 0 15px #65e6df55}
+.lobby-heading h2{font-size:clamp(42px,6vw,76px);line-height:.98;letter-spacing:-3px;font-weight:1000;text-transform:uppercase;text-shadow:0 6px 28px #000b}
+.lobby-heading h2 em{color:#9af7ef;text-shadow:0 0 25px #55e6df66}
+.lobby-heading p{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#b7c8dc;margin-top:10px}
+.rank-chip{border:1px solid #e5c58b55;border-radius:3px;background:linear-gradient(120deg,#342d32dd,#17243add);box-shadow:0 8px 35px #0005;color:#ffda91}
+.lobby-stage{grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);gap:clamp(8px,2vw,26px);padding:24px 0 20px;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
+.lobby-stage:before{inset:10px 4%;background:
+linear-gradient(90deg,transparent,#a8d4ec12 50%,transparent),
+repeating-linear-gradient(115deg,transparent 0 95px,#ffffff05 96px 98px);border-top:1px solid #b6d7ef22;border-bottom:1px solid #b6d7ef22}
+.player-card{min-height:390px;padding:18px 24px 22px;border-radius:5px 18px 5px 18px;background:
+linear-gradient(145deg,#203c5bd9,#101c30f2 58%,#0b1527f5);
+border:1px solid #b4d9ec42;box-shadow:0 18px 55px #0008,inset 0 1px #ffffff19;backdrop-filter:blur(5px)}
+.player-card:hover{transform:translateY(-5px) scale(1.008);border-color:#b6f8f2aa;box-shadow:0 25px 60px #000a,0 0 35px #65e6df18}
+.player-one{border-left:3px solid #6ce9e0}.player-two{border-left:3px solid #ff82a9}
+.player-one:before,.player-two:before{height:2px}
+.card-top{font-size:9px;letter-spacing:3px;color:#b3c9df}
+.card-top b{padding:5px 8px;background:#5ee9df1a;border:1px solid #65e6df44;border-radius:2px}
+.player-two .card-top b{background:#ff719d1a;border-color:#ff719d55}
+.avatar{height:205px;margin:12px auto 7px;background:
+radial-gradient(ellipse at 50% 85%,#66eee866 0, #65e6df20 24%,transparent 60%),
+linear-gradient(180deg,#ffffff03,transparent);overflow:visible}
+.avatar-pink{background:radial-gradient(ellipse at 50% 85%,#ff719d66 0,#ff719d20 24%,transparent 60%)}
+.lobby-character{width:128px;height:192px;background-size:640px 192px;background-position:calc(var(--skin,0)*-128px) 0;filter:drop-shadow(0 12px 12px #000b) drop-shadow(0 0 13px #73f4e855);animation:characterIdle 2.8s ease-in-out infinite}
+.player-two .lobby-character{filter:drop-shadow(0 12px 12px #000b) drop-shadow(0 0 13px #ff8eb455);animation-delay:-1.4s}
+.character-aura{bottom:0;width:145px;height:23px;filter:blur(14px);animation:auraPulse 2.4s ease-in-out infinite}
+.player-card h3{font-size:clamp(17px,2vw,23px);letter-spacing:2.5px;font-weight:1000;text-shadow:0 3px 16px #000b}
+.player-card>small{font-size:9px;letter-spacing:4px;color:#9bb8d0}
+.player-card label{font-size:8px;letter-spacing:2px;color:#b7ccdf}
+.player-card select{border-radius:3px;border:1px solid #6b91ae;background:linear-gradient(180deg,#1b3550,#0a1729);padding:12px;color:#e8f7ff;font-size:11px;letter-spacing:1px;box-shadow:inset 0 1px #ffffff12}
+.versus{position:relative}
+.versus>b{font-size:clamp(38px,5vw,60px);font-style:italic;font-weight:1000;color:#f5fbff;letter-spacing:-4px;text-shadow:0 0 18px #fff8,0 0 45px #67e8df66}
+.mini-court{width:132px;height:80px;margin:16px 0;border:2px solid #f5d5a4;border-radius:1px;background:linear-gradient(180deg,#4a9eb8 0 44%,#d49b64 44%);box-shadow:0 0 28px #9edbf533,0 12px 25px #0006;transform:perspective(180px) rotateX(8deg)}
+.mini-court:after{border-left:2px solid #fff}
+.versus small{font-size:8px;letter-spacing:3px;color:#b4c8dc}
+.lobby-bottom{gap:18px;margin-top:8px}
+.panel{border-radius:4px 13px 4px 13px;padding:18px 20px;background:linear-gradient(140deg,#172c46ed,#0a1629f2);border:1px solid #8cb4d13b;box-shadow:0 16px 45px #0007,inset 0 1px #ffffff12}
+.panel-head{font-size:10px;letter-spacing:3px;color:#9bf0e9}
+.panel-head small{letter-spacing:1.5px;color:#93a9bf}
+.mode-row{border-radius:3px;background:linear-gradient(90deg,#233b57aa,#13243a99);border-color:#9bbad02b;padding:13px 12px}
+.mode-row b{font-size:10px;letter-spacing:1.8px;color:#edf8ff}
+.mode-row span{font-size:9px;color:#a7bfd3}
+.mode-row strong{color:#9af7ed;text-shadow:0 0 12px #65e6df}
+.room-actions button,button{border-radius:3px;letter-spacing:1px;text-transform:uppercase;font-weight:1000}
+button{background:linear-gradient(180deg,#a4fff4,#4ac9d2);box-shadow:0 4px 0 #1c7285,0 8px 22px #42c9d433;color:#061729}
+button:hover{filter:brightness(1.14);transform:translateY(-2px)}
+button.secondary{background:linear-gradient(180deg,#334e6b,#1c304b);color:#e8f7ff;border:1px solid #6f91ac;box-shadow:0 4px 0 #0b1728}
+.room-actions input,.chat-row input{border-radius:3px;background:#071427;border:1px solid #496a87;color:#eaf8ff}
+.rule{border-bottom-color:#a8c6df22;font-size:9px;letter-spacing:2px}
+.rule b{color:#eaf8ff;letter-spacing:1px}
+.launch{position:relative;margin-top:20px;padding:18px 20px;border-radius:3px;background:linear-gradient(100deg,#b0fff4 0%,#63e5e2 52%,#4db3d6 100%);box-shadow:0 5px 0 #1d7789,0 12px 28px #3dcbd544;font-size:13px;letter-spacing:2.5px}
+.launch span{font-size:18px}
+.note{font-size:8px;letter-spacing:2px;color:#8ba6bf}
+.chat-panel{border-radius:3px 12px 3px 12px;background:#0b182bdd;border-color:#8db6d13b}
+.chat-panel summary{font-size:9px;letter-spacing:2px}
+.gamebox{margin-top:25px;border:2px solid #c2e7f5;border-radius:3px;box-shadow:0 25px 85px #000c,0 0 0 5px #ffffff0a,0 0 55px #74e4e52b}
+.gamebox canvas{aspect-ratio:16/9}
+.overlay{background:linear-gradient(135deg,#071321bb,#071321dd);backdrop-filter:blur(7px)}
+.modal{border-radius:4px 16px 4px 16px;background:linear-gradient(145deg,#1d3854f5,#0a1629f5);border:1px solid #9bd8e5;padding:30px;box-shadow:0 25px 80px #000b,0 0 35px #65e6df22}
+.modal h2{font-size:clamp(24px,4vw,36px);letter-spacing:1px;text-transform:uppercase}
+.below .card{border-radius:3px 10px 3px 10px}
+@keyframes characterIdle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7px) scale(1.015)}}
+@keyframes auraPulse{0%,100%{opacity:.55;transform:scaleX(.88)}50%{opacity:1;transform:scaleX(1.12)}}
+@media(max-width:760px){
+ .app-shell{padding:14px 12px 30px}.topbar{margin-bottom:16px}.lobby-stage{grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr);gap:5px;padding:14px 0}
+ .player-card{min-height:330px;padding:12px 8px}.avatar{height:155px}.lobby-character{transform:scale(.82);transform-origin:bottom center}
+ .mini-court{width:44px;height:46px}.versus>b{font-size:25px}.lobby-bottom{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+ .lobby-heading h2{font-size:34px}.lobby-heading p{font-size:9px;letter-spacing:.7px}.rank-chip{display:none}
+ .lobby-stage{grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr);gap:3px}
+ .player-card{min-height:295px;padding:10px 6px}.avatar{height:125px}.lobby-character{transform:scale(.7);transform-origin:bottom center}
+ .player-card h3{font-size:10px;letter-spacing:1px}.player-card>small{font-size:7px;letter-spacing:2px}.player-card select{font-size:8px;padding:8px}
+ .mini-court{width:27px;height:32px}.versus>b{font-size:17px}.versus small{font-size:6px;letter-spacing:1px}
+ .panel{padding:14px}.room-actions{flex-wrap:wrap}.room-actions input{flex-basis:100%}
+}
+@media(prefers-reduced-motion:reduce){.lobby-character,.character-aura{animation:none}}
+</style>
+</head>
 <body><main class="app-shell">
-<header class="topbar"><div class="brand"><div class="brand-mark">VC</div><div><h1>VOLLEY <span>CLASH</span></h1><div class="sub">THE COURT IS YOURS</div></div></div><div class="top-meta"><i></i> ARCADE VOLLEYBALL <b>SEASON 01</b></div></header>
+<header class="topbar"><div class="brand"><div class="brand-mark">VC</div><div><h1>VOLLEY <span>CLASH</span></h1><div class="sub">THE NEXT POINT IS YOURS</div></div></div><div class="top-meta"><i></i> ARCADE VOLLEYBALL <b>SEASON 01</b></div></header>
 <section id="lobbyScreen">
-<div class="lobby-heading"><div><div class="eyebrow">WELCOME TO THE CLUB</div><h2>READY TO <em>SPIKE?</em></h2><p>Build your squad. Pick your style. Own the court.</p></div><div class="rank-chip">★ <span><b>ROOKIE</b><small>PLAYER RANK</small></span></div></div>
+<div class="lobby-heading"><div><div class="eyebrow">NATIONAL HIGH SCHOOL LEAGUE</div><h2>READY TO <em>SPIKE?</em></h2><p>SELECT YOUR PLAYER  ·  STEP ONTO THE COURT  ·  TAKE THE WIN</p></div><div class="rank-chip">★ <span><b>ROOKIE</b><small>PLAYER RANK</small></span></div></div>
 <div class="lobby-stage">
 <div class="player-card player-one"><div class="card-top"><span>PLAYER 01</span><b>LOCAL</b></div><div class="avatar avatar-blue"><div class="lobby-character" id="lobbyChar1"></div><span class="character-aura"></span></div><h3>BLUE STRIKER</h3><small>POWER HITTER</small><label for="p1skin">CHOOSE YOUR PLAYER</label><select id="p1skin"><option value="0">Blue hero</option><option value="1">Pink hero</option><option value="2">Green hero</option><option value="3">Orange hero</option><option value="4">Purple hero</option></select></div>
 <div class="versus"><b>VS</b><div class="mini-court"><i></i><span>●</span></div><small>1 VS 1<br>VOLLEYBALL</small></div>
 <div class="player-card player-two"><div class="card-top"><span>PLAYER 02</span><b>OPPONENT</b></div><div class="avatar avatar-pink"><div class="lobby-character" id="lobbyChar2"></div><span class="character-aura"></span></div><h3>PINK ACE</h3><small>QUICK DEFENDER</small><label for="p2skin">CHOOSE YOUR PLAYER</label><select id="p2skin"><option value="0">Blue hero</option><option value="1" selected>Pink hero</option><option value="2">Green hero</option><option value="3">Orange hero</option><option value="4">Purple hero</option></select></div>
 </div>
 <div class="lobby-bottom"><section class="panel"><div class="panel-head">01 / GAME MODE <small>SELECT PLAY STYLE</small></div><div class="mode-row"><b>⚡ QUICK MATCH</b><span>Play on this device</span><strong>✓</strong></div><div class="mode-row"><b>◎ PRIVATE ROOM</b><span>Invite a friend online</span></div><div class="room-actions"><button id="hostBtn">CREATE ROOM</button><input id="joinCode" placeholder="ROOM CODE"><button id="joinBtn" class="secondary">JOIN</button></div><div id="roomStatus">Create a room and share its code with a friend.</div><div id="roomCode"></div><div class="room-actions"><button id="onlineStart" disabled>START ONLINE MATCH</button><button id="leaveBtn" class="secondary">LEAVE</button></div></section>
-<section class="panel settings"><div class="panel-head">02 / MATCH SETTINGS <small>STANDARD RULES</small></div><div class="rule"><span>POINT LIMIT</span><b>7 POINTS</b></div><div class="rule"><span>WIN CONDITION</span><b>WIN BY 2</b></div><div class="rule"><span>COURT</span><b>SUMMER BEACH</b></div><button id="lobbyPlay" class="launch">ENTER THE COURT <span>➜</span></button><small class="note">LOCAL MATCH · 2 PLAYERS · ONE KEYBOARD</small></section></div>
+<section class="panel settings"><div class="panel-head">02 / MATCH SETTINGS <small>STANDARD RULES</small></div><div class="rule"><span>POINT LIMIT</span><b>7 POINTS</b></div><div class="rule"><span>WIN CONDITION</span><b>WIN BY 2</b></div><div class="rule"><span>COURT</span><b>INDOOR ARENA</b></div><button id="lobbyPlay" class="launch">ENTER THE COURT <span>➜</span></button><small class="note">LOCAL MATCH · 2 PLAYERS · ONE KEYBOARD</small></section></div>
 <details class="chat-panel"><summary>ROOM CHAT <span>OPEN CHAT</span></summary><div id="chatLog">Chat appears here when someone joins your room.</div><div class="chat-row"><input id="chatInput" maxlength="180" placeholder="Message your opponent"><button id="sendChat">SEND</button></div></details>
 </section>
 <div class="gamebox" id="gamebox" style="display:none"><canvas id="game" width="960" height="540" aria-label="2D volleyball game"></canvas><div class="overlay" id="overlay" style="display:none"><div class="modal"><h2 id="modalTitle">Ready to serve?</h2><p id="modalText">Jump, bump and spike your way to victory.</p><div class="actions"><button id="startBtn">START MATCH</button><button class="secondary" id="howBtn">HOW TO PLAY</button></div></div></div></div>
