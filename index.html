@@ -486,10 +486,12 @@ function draw(){
  activePlayers().forEach(p=>{ctx.globalAlpha=.24;ctx.beginPath();ctx.ellipse(p.x,FLOOR+4,30,7,0,0,Math.PI*2);ctx.fillStyle='#10182b';ctx.fill();ctx.globalAlpha=1;if(characterSheet.complete&&characterSheet.naturalWidth){const sx=p.skin*32;ctx.save();if(p.face<0){ctx.translate(p.x*2,0);ctx.scale(-1,1)}ctx.imageSmoothingEnabled=false;ctx.drawImage(characterSheet,sx,0,32,48,p.x-23,p.y-8,46,69);ctx.restore()}else{circle(p.x,p.y+p.r,p.r,p.dark);circle(p.x,p.y+p.r-3,p.r-5,p.color)}if(p.hitTimer>0){ctx.save();ctx.globalAlpha=.32;circle(p.x+p.face*37,p.y+p.r,31,'#fff2a6');ctx.restore()}});
  ctx.save();ctx.globalAlpha=.28;const aura=ctx.createRadialGradient(ball.x,ball.y,2,ball.x,ball.y,34);aura.addColorStop(0,'#fff');aura.addColorStop(1,'#fff0');circle(ball.x,ball.y,34,aura);ctx.restore();ctx.save();ctx.translate(ball.x,ball.y);ctx.rotate(ball.spin);if(volleyballSprite.complete&&volleyballSprite.naturalWidth)ctx.drawImage(volleyballSprite,-20,-20,40,40);else{circle(0,0,ball.r,'#fff9e9');ctx.strokeStyle='#e69c42';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,11,-1.2,1.2);ctx.arc(0,0,11,1.95,4.3);ctx.stroke()}ctx.restore();
 }
+function teamOfPlayer(p){const i=players.indexOf(p);return gameMode==='solo'?(i<3?0:1):(i===0?0:1)}
 function collidePlayer(p){
  let dx=ball.x-p.x,dy=ball.y-(p.y+p.r),d=Math.hypot(dx,dy),min=ball.r+p.r+1;
  const hitKeys=(gameMode==='solo'&&p!==players[0])?(p.aiKeys||{}):((netRole==='host'&&p===players[1])?remoteKeys:keys);
  if(p.blockTimer>0&&Math.abs(p.x-NET_X)<105&&d<92&&ball.y<p.y+p.r+15){
+   lastTouchTeam=teamOfPlayer(p);
    const side=p.x<NET_X?1:-1;ball.vx=side*Math.max(5,Math.abs(ball.vx)*.9);ball.vy=-Math.max(5,Math.abs(ball.vy)*.65);ball.x=p.x+side*48;ball.y=p.y-8;
  }
  if(d<min){lastTouchTeam=teamOfPlayer(p);let nx=dx/(d||1),ny=dy/(d||1);ball.x=p.x+nx*min;ball.y=p.y+p.r+ny*min;let dot=ball.vx*nx+ball.vy*ny;if(dot<0){ball.vx-=1.8*dot*nx;ball.vy-=1.8*dot*ny}ball.vx+=p.vx*.32;ball.vy-=1.1;if(Math.abs(ball.vx)<3)ball.vx+=(p.x<NET_X?1:-1)*2.5}
