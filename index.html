@@ -519,16 +519,25 @@ function update(dt){
      const nearestBot=team.reduce((best,bot)=>Math.abs(ball.x-bot.x)<Math.abs(ball.x-best.x)?bot:best,team[0]);
      const minX=index<3?COURT_LEFT+35:NET_X+45,maxX=index<3?NET_X-45:COURT_RIGHT-35;
      const target=Math.max(minX,Math.min(maxX,ball.x));
-     const desired=nearestBot===p?target:homes[index-teamStart];
-     if(desired<p.x-12)controlKeys[p.left]=true;else if(desired>p.x+12)controlKeys[p.right]=true;
-     if(nearestBot===p&&ball.y<p.y+55&&Math.abs(ball.x-p.x)<155&&p.onGround)controlKeys[p.jump]=true;
-     if(nearestBot===p&&Math.abs(ball.x-p.x)<125&&Math.abs(ball.y-(p.y+p.r))<145){const nearNet=Math.abs(p.x-NET_X)<190;const ballAbove=ball.y<p.y+p.r-8;const ballLow=ball.y>p.y+p.r-18;if(nearNet&&ballAbove)controlKeys[p.spike]=true;else if(ballLow&&Math.abs(ball.x-p.x)<78)controlKeys[p.feint]=true;else if(ballAbove&&Math.abs(ball.x-p.x)<105)controlKeys[p.set]=true;else controlKeys[p.hit]=true;}if(nearestBot===p&&Math.abs(p.x-NET_X)<135&&ball.y<p.y+15&&p.onGround)controlKeys[p.block]=true;
+     const isChasing=nearestBot===p&&Math.abs(ball.x-p.x)<340;
+     const desired=isChasing?target:homes[index-teamStart];
+     if(desired<p.x-18)controlKeys[p.left]=true;else if(desired>p.x+18)controlKeys[p.right]=true;
+     // Bots react later and have a smaller reach window than a human player.
+     if(isChasing&&ball.y<p.y+38&&Math.abs(ball.x-p.x)<112&&p.onGround)controlKeys[p.jump]=true;
+     if(isChasing&&Math.abs(ball.x-p.x)<82&&Math.abs(ball.y-(p.y+p.r))<112){
+       const nearNet=Math.abs(p.x-NET_X)<145,ballAbove=ball.y<p.y+p.r-18,ballLow=ball.y>p.y+p.r-10;
+       if(nearNet&&ballAbove&&Math.abs(ball.x-p.x)<68)controlKeys[p.spike]=true;
+       else if(ballLow&&Math.abs(ball.x-p.x)<55)controlKeys[p.feint]=true;
+       else if(ballAbove&&Math.abs(ball.x-p.x)<68)controlKeys[p.set]=true;
+       else controlKeys[p.hit]=true;
+     }
+     if(isChasing&&Math.abs(p.x-NET_X)<105&&Math.abs(ball.x-p.x)<72&&ball.y<p.y-8&&p.onGround)controlKeys[p.block]=true;
    }
    if(gameMode==='solo'&&index>0)p.aiKeys=controlKeys;
-   p.vx=0;if(controlKeys[p.left])p.vx=-5.3;if(controlKeys[p.right])p.vx=5.3;
+   p.vx=0;const moveSpeed=(gameMode==='solo'&&index>0&&netRole==='offline')?3.65:5.3;if(controlKeys[p.left])p.vx=-moveSpeed;if(controlKeys[p.right])p.vx=moveSpeed;
    p.x+=p.vx*step;const teamMin=gameMode==='solo'?(index<3?COURT_LEFT+p.r:NET_X+p.r+14):(index===0?COURT_LEFT+p.r:NET_X+p.r+14);const teamMax=gameMode==='solo'?(index<3?NET_X-p.r-14:COURT_RIGHT-p.r):(index===0?NET_X-p.r-14:COURT_RIGHT-p.r);p.x=Math.max(teamMin,Math.min(teamMax,p.x));p.face=p.x<NET_X?1:-1;
-   if(controlKeys[p.jump]&&p.onGround){p.vy=-13.5;p.onGround=false}
-   if(controlKeys[p.block]&&Math.abs(p.x-NET_X)<150&&p.onGround){p.vy=-9.5;p.onGround=false;p.blockTimer=22}
+   if(controlKeys[p.jump]&&p.onGround){p.vy=(gameMode==='solo'&&index>0&&netRole==='offline')?-11.2:-13.5;p.onGround=false}
+   if(controlKeys[p.block]&&Math.abs(p.x-NET_X)<150&&p.onGround){p.vy=-9.5;p.onGround=false;p.blockTimer=(gameMode==='solo'&&index>0&&netRole==='offline')?12:22}
    p.vy+=.62*step;p.y+=p.vy*step;
    if(p.y+p.r*2>=FLOOR){p.y=FLOOR-p.r*2;p.vy=0;p.onGround=true}
    p.hitTimer=Math.max(0,p.hitTimer-step);p.actionTimer=Math.max(0,p.actionTimer-step);p.blockTimer=Math.max(0,p.blockTimer-step);
