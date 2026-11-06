@@ -486,7 +486,7 @@ function draw(){
 function collidePlayer(p){
  let dx=ball.x-p.x,dy=ball.y-(p.y+p.r),d=Math.hypot(dx,dy),min=ball.r+p.r+1;
  if(d<min){let nx=dx/(d||1),ny=dy/(d||1);ball.x=p.x+nx*min;ball.y=p.y+p.r+ny*min;let dot=ball.vx*nx+ball.vy*ny;if(dot<0){ball.vx-=1.8*dot*nx;ball.vy-=1.8*dot*ny}ball.vx+=p.vx*.32;ball.vy-=1.1;if(Math.abs(ball.vx)<3)ball.vx+=(p.x<NET_X?1:-1)*2.5}
- const hitKeys=(netRole==='host'&&p===players[1])?remoteKeys:keys;if(hitKeys[p.hit]&&p.hitTimer<=0&&d<90){p.hitTimer=18;let nx=dx/(d||1),ny=dy/(d||1);ball.vx=nx*8+p.face*2.5;ball.vy=Math.min(-7,ny*7-4);ball.x+=nx*8;ball.y+=ny*8}
+ const hitKeys=(gameMode==='solo'&&p!==players[0])?(p.aiKeys||{}):((netRole==='host'&&p===players[1])?remoteKeys:keys);if(hitKeys[p.hit]&&p.hitTimer<=0&&d<90){p.hitTimer=18;let nx=dx/(d||1),ny=dy/(d||1);ball.vx=nx*8+p.face*2.5;ball.vy=Math.min(-7,ny*7-4);ball.x+=nx*8;ball.y+=ny*8}
 }
 function point(winner){score[winner]++;if((score[winner]>=7)&&(Math.abs(score[0]-score[1])>=2)){matchOver=true;running=false;show(winner===0?'BLUE TEAM WINS!':'PINK TEAM WINS!',`Final score: ${score[0]} – ${score[1]}. Great match!`,'NEW MATCH');return}running=false;serveSide=1-winner;show(winner===0?'POINT BLUE!':'POINT PINK!',`Score: ${score[0]} – ${score[1]}. Get ready for the next serve.`,'NEXT POINT')}
 function update(dt){
@@ -503,6 +503,7 @@ function update(dt){
      if(nearestBot===p&&ball.y<p.y+55&&Math.abs(ball.x-p.x)<155&&p.onGround)controlKeys[p.jump]=true;
      if(nearestBot===p&&Math.abs(ball.x-p.x)<88&&Math.abs(ball.y-(p.y+p.r))<115)controlKeys[p.hit]=true;
    }
+   if(gameMode==='solo'&&index>0)p.aiKeys=controlKeys;
    p.vx=0;if(controlKeys[p.left])p.vx=-5.3;if(controlKeys[p.right])p.vx=5.3;
    p.x+=p.vx*step;p.x=Math.max(p.r+12,Math.min(W-p.r-12,p.x));p.face=p.x<NET_X?1:-1;
    if(controlKeys[p.jump]&&p.onGround){p.vy=-13.5;p.onGround=false}
