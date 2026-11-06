@@ -443,7 +443,7 @@ modeSelect.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('cl
   document.getElementById('roomStatus').textContent='Create a private room or enter a friend room code to play online.';
   drawer.scrollIntoView({behavior:'smooth',block:'center'});return;
  }
- gameMode=mode;const teamLabels=document.querySelectorAll('#gamebox .card h3');if(teamLabels.length>1){teamLabels[0].textContent=mode==='solo'?'PLAYER · BLUE':'PLAYER 1 · BLUE';teamLabels[1].textContent=mode==='solo'?'CPU TEAM · 2 BOTS':'PLAYER 2 · PINK'}start();
+ gameMode=mode;const teamLabels=document.querySelectorAll('#gamebox .card h3');if(teamLabels.length>1){teamLabels[0].textContent=mode==='solo'?'BLUE TEAM · YOU + 2 BOTS':'PLAYER 1 · BLUE';teamLabels[1].textContent=mode==='solo'?'PINK TEAM · 3 BOTS':'PLAYER 2 · PINK'}start();
 }));
 function updateLobbyCharacters(){const hero=document.getElementById('lobbyChar1');if(hero)hero.style.setProperty('--skin',players[0].skin);const second=document.getElementById('lobbyChar2');if(second)second.style.setProperty('--skin',players[1].skin)}
 document.getElementById('p1skin').addEventListener('change',e=>{players[0].skin=Number(e.target.value);updateLobbyCharacters()});
