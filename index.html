@@ -392,6 +392,15 @@ button.secondary{background:linear-gradient(180deg,#334e6b,#1c304b);color:#e8f7f
 <select id="p1skin" class="anime-skin-select" aria-label="Choose character"><option value="0">Orange-haired player</option><option value="1">Dark-haired player</option><option value="2">Blond player</option><option value="3">Brown-haired player</option><option value="4">Silver-haired player</option></select>
 <select id="p2skin" hidden><option value="0">Blue hero</option><option value="1" selected>Pink hero</option><option value="2">Green hero</option><option value="3">Orange hero</option><option value="4">Purple hero</option></select>
 <button id="lobbyPlay" class="anime-play">PLAY MATCH <span>›</span></button>
+<div id="modeSelect" class="mode-select" hidden>
+ <div class="mode-backdrop"></div><div class="mode-dialog">
+  <div class="mode-eyebrow">CHOOSE YOUR GAME</div><h2>SELECT MODE</h2><p>How do you want to play today?</p>
+  <button class="mode-option" data-mode="solo"><span class="mode-icon">♟</span><span><b>SOLO</b><small>Play against the computer</small></span><strong>›</strong></button>
+  <button class="mode-option" data-mode="local"><span class="mode-icon">⚔</span><span><b>2 PLAYER</b><small>Play together on one keyboard</small></span><strong>›</strong></button>
+  <button class="mode-option" data-mode="online"><span class="mode-icon">⌁</span><span><b>ONLINE PRIVATE</b><small>Create a room or join with a code</small></span><strong>›</strong></button>
+  <button id="modeBack" class="mode-cancel">BACK TO LOBBY</button>
+ </div>
+</div>
 <details class="chat-panel anime-chat"><summary>●　CHAT</summary><div id="chatLog">Chat appears here when someone joins your room.</div><div class="chat-row"><input id="chatInput" maxlength="180" placeholder="Message your opponent"><button id="sendChat">SEND</button></div></details>
 <div class="anime-footer">VOLLEY CLASH <span>·</span> SEASON 01</div>
 </section>
@@ -414,10 +423,23 @@ const ball={x:300,y:220,vx:4,vy:-2,r:15,spin:0};
 function resetBall(side){serveSide=side;ball.x=side===0?270:690;ball.y=245;ball.vx=side===0?4.2:-4.2;ball.vy=-5.2;ball.spin=0}
 function resetPlayers(){players[0].x=235;players[1].x=725;for(const p of players){p.y=FLOOR-p.r*2;p.vx=p.vy=0;p.onGround=true;p.hitTimer=0}}
 function show(title,text,button='PLAY AGAIN'){document.getElementById('modalTitle').textContent=title;document.getElementById('modalText').textContent=text;document.getElementById('startBtn').textContent=button;overlay.style.display='grid'}
-let enteringMatch=false;
+let enteringMatch=false,gameMode='local';
 function enterMatch(onReady){if(enteringMatch)return;enteringMatch=true;const lobby=document.getElementById('lobbyScreen'),gamebox=document.getElementById('gamebox');document.body.classList.add('match-entering');lobby.classList.add('lobby-exit');setTimeout(()=>{lobby.style.display='none';lobby.classList.remove('lobby-exit');gamebox.style.display='block';gamebox.classList.add('game-enter');requestAnimationFrame(()=>{gamebox.classList.add('game-enter-active');setTimeout(()=>{gamebox.classList.remove('game-enter','game-enter-active');document.body.classList.remove('match-entering');enteringMatch=false;if(onReady)onReady()},650)})},420)}
 function start(){enterMatch(()=>{if(matchOver){score=[0,0];matchOver=false}resetPlayers();resetBall(serveSide);running=true;paused=false;overlay.style.display='none';last=performance.now();if(netRole==='host'&&conn&&conn.open)conn.send({type:'start'})})}
-document.getElementById('startBtn').onclick=start;document.getElementById('lobbyPlay').onclick=start;
+
+document.getElementById('startBtn').onclick=start;
+const modeSelect=document.getElementById('modeSelect');
+document.getElementById('lobbyPlay').onclick=()=>{modeSelect.hidden=false};
+document.getElementById('modeBack').onclick=()=>{modeSelect.hidden=true};
+modeSelect.querySelectorAll('[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{
+ const mode=btn.dataset.mode;modeSelect.hidden=true;
+ if(mode==='online'){
+  const drawer=document.querySelector('.online-drawer');drawer.open=true;
+  document.getElementById('roomStatus').textContent='Create a private room or enter a friend room code to play online.';
+  drawer.scrollIntoView({behavior:'smooth',block:'center'});return;
+ }
+ gameMode=mode;start();
+}));
 function updateLobbyCharacters(){const hero=document.getElementById('lobbyChar1');if(hero)hero.style.setProperty('--skin',players[0].skin);const second=document.getElementById('lobbyChar2');if(second)second.style.setProperty('--skin',players[1].skin)}
 document.getElementById('p1skin').addEventListener('change',e=>{players[0].skin=Number(e.target.value);updateLobbyCharacters()});
 document.querySelectorAll('#lobbyScreen .roster-card').forEach(card=>card.addEventListener('click',()=>{const skin=Number(card.dataset.skin);document.getElementById('p1skin').value=String(skin);players[0].skin=skin;updateLobbyCharacters();document.querySelectorAll('#lobbyScreen .roster-card').forEach(x=>x.classList.toggle('selected',x===card))}));
@@ -467,8 +489,15 @@ function collidePlayer(p){
 function point(winner){score[winner]++;if((score[winner]>=7)&&(Math.abs(score[0]-score[1])>=2)){matchOver=true;running=false;show(winner===0?'BLUE TEAM WINS!':'PINK TEAM WINS!',`Final score: ${score[0]} – ${score[1]}. Great match!`,'NEW MATCH');return}running=false;serveSide=1-winner;show(winner===0?'POINT BLUE!':'POINT PINK!',`Score: ${score[0]} – ${score[1]}. Get ready for the next serve.`,'NEXT POINT')}
 function update(dt){
  const step=Math.min(dt/16.67,2);
- players.forEach(p=>{
-   const controlKeys=(netRole==='host'&&p===players[1])?remoteKeys:keys;p.vx=0;if(controlKeys[p.left])p.vx=-5.3;if(controlKeys[p.right])p.vx=5.3;
+ players.forEach((p,index)=>{
+   let controlKeys=(netRole==='host'&&p===players[1])?remoteKeys:keys;
+   if(gameMode==='solo'&&index===1&&netRole==='offline'){
+     const target=ball.x;controlKeys={};
+     if(target<p.x-13)controlKeys[p.left]=true;else if(target>p.x+13)controlKeys[p.right]=true;
+     if(ball.y<p.y+48&&Math.abs(target-p.x)<145&&p.onGround)controlKeys[p.jump]=true;
+     if(Math.abs(target-p.x)<85&&Math.abs(ball.y-(p.y+p.r))<100)controlKeys[p.hit]=true;
+   }
+   p.vx=0;if(controlKeys[p.left])p.vx=-5.3;if(controlKeys[p.right])p.vx=5.3;
    p.x+=p.vx*step;p.x=Math.max(p.r+12,Math.min(W-p.r-12,p.x));p.face=p.x<NET_X?1:-1;
    if(controlKeys[p.jump]&&p.onGround){p.vy=-13.5;p.onGround=false}
    p.vy+=.62*step;p.y+=p.vy*step;
@@ -487,7 +516,18 @@ function loop(t){if(!running){if(netRole==='host'&&t-lastSync>55){syncState();la
 draw();requestAnimationFrame(loop);
 })();
 </script>
-<style id="lobby-motion">
+
+<style id="mode-select-style">
+.mode-select{position:fixed;inset:0;z-index:8000;display:grid;place-items:center;padding:18px}
+.mode-select[hidden]{display:none}.mode-backdrop{position:absolute;inset:0;background:#030817d9;backdrop-filter:blur(12px)}
+.mode-dialog{position:relative;width:min(100%,440px);padding:28px;border:1px solid #58749a;border-radius:18px;background:linear-gradient(145deg,#1b3153,#0b1429);box-shadow:0 25px 90px #000b;animation:modePop .28s ease both}
+.mode-eyebrow{font-size:10px;letter-spacing:3px;color:#65e6df;font-weight:900}.mode-dialog h2{font-size:30px;margin:7px 0 3px}.mode-dialog>p{color:#9eafd0;font-size:13px;margin:0 0 19px}
+.mode-option{width:100%;display:flex;align-items:center;gap:14px;text-align:left;margin:9px 0;padding:13px 14px;background:#172746;border:1px solid #354d72;border-radius:11px;color:#f5f7ff;transition:.2s}
+.mode-option:hover{background:#20395e;border-color:#65e6df;transform:translateX(4px)}.mode-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:#65e6df18;color:#65e6df;font-size:22px}
+.mode-option span:nth-child(2){display:grid;gap:3px;flex:1}.mode-option b{font-size:12px;letter-spacing:1px}.mode-option small{font-size:11px;color:#9eafd0;font-weight:500}.mode-option strong{font-size:23px;color:#65e6df}
+.mode-cancel{width:100%;margin-top:8px;background:transparent;color:#aab9d4;border:1px solid #35496b;font-size:10px;letter-spacing:1px}
+@keyframes modePop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+</style><style id="lobby-motion">
 /* Lobby motion and cinematic match launch */
 #lobbyScreen.anime-lobby{animation:lobbyReveal .95s cubic-bezier(.18,.75,.2,1) both}
 #lobbyScreen .anime-hero-character{animation:heroFloat 4.2s ease-in-out infinite;transform-origin:50% 85%}
