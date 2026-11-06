@@ -423,8 +423,8 @@ const players=[
  {x:1110,y:FLOOR-54,vx:0,vy:0,r:27,color:'#ff739d',dark:'#b72e65',left:'bot2-left',right:'bot2-right',jump:'bot2-jump',hit:'bot2-hit',spike:'bot2-spike',feint:'bot2-feint',set:'bot2-set',block:'bot2-block',face:-1,onGround:true,hitTimer:0,actionTimer:0,blockTimer:0,skin:3},
  {x:1290,y:FLOOR-54,vx:0,vy:0,r:27,color:'#ff739d',dark:'#b72e65',left:'bot3-left',right:'bot3-right',jump:'bot3-jump',hit:'bot3-hit',spike:'bot3-spike',feint:'bot3-feint',set:'bot3-set',block:'bot3-block',face:-1,onGround:true,hitTimer:0,actionTimer:0,blockTimer:0,skin:4}
 ];
-const ball={x:300,y:220,vx:4,vy:-2,r:15,spin:0};
-function resetBall(side){serveSide=side;ball.x=side===0?500:1180;ball.y=245;ball.vx=side===0?4.2:-4.2;ball.vy=-5.2;ball.spin=0}
+const ball={x:300,y:220,vx:4,vy:-2,r:15,spin:0};let rallyTime=0;
+function resetBall(side){serveSide=side;ball.x=side===0?500:1180;ball.y=245;ball.vx=side===0?4.2:-4.2;ball.vy=-5.2;ball.spin=0;rallyTime=0}
 function activePlayers(){return gameMode==='solo'?players:players.slice(0,2)}
 function resetPlayers(){[180,460,650,1030,1280,1500].forEach((x,i)=>players[i].x=x);for(const p of players){p.y=FLOOR-p.r*2;p.vx=p.vy=0;p.onGround=true;p.hitTimer=0;p.actionTimer=0;p.blockTimer=0}}
 function show(title,text,button='PLAY AGAIN'){document.getElementById('modalTitle').textContent=title;document.getElementById('modalText').textContent=text;document.getElementById('startBtn').textContent=button;overlay.style.display='grid'}
@@ -505,7 +505,7 @@ function collidePlayer(p){
    }
  }
 }
-function point(winner){score[winner]++;if((score[winner]>=7)&&(Math.abs(score[0]-score[1])>=2)){matchOver=true;running=false;show(winner===0?'BLUE TEAM WINS!':'PINK TEAM WINS!',`Final score: ${score[0]} – ${score[1]}. Great match!`,'NEW MATCH');return}running=false;serveSide=1-winner;show(winner===0?'POINT BLUE!':'POINT PINK!',`Score: ${score[0]} – ${score[1]}. Get ready for the next serve.`,'NEXT POINT')}
+function point(winner){if(!running)return;score[winner]++;if(score[winner]>=7){matchOver=true;running=false;show(winner===0?'BLUE TEAM WINS!':'PINK TEAM WINS!',`Final score: ${score[0]} – ${score[1]}. First to 7 wins!`,'NEW MATCH');return}running=false;serveSide=1-winner;show(winner===0?'POINT BLUE!':'POINT PINK!',`Score: ${score[0]} – ${score[1]}. Get ready for the next serve.`,'NEXT POINT')}
 function update(dt){
  const step=Math.min(dt/16.67,2);
  players.forEach((p,index)=>{
@@ -520,7 +520,7 @@ function update(dt){
      const desired=nearestBot===p?target:homes[index-teamStart];
      if(desired<p.x-12)controlKeys[p.left]=true;else if(desired>p.x+12)controlKeys[p.right]=true;
      if(nearestBot===p&&ball.y<p.y+55&&Math.abs(ball.x-p.x)<155&&p.onGround)controlKeys[p.jump]=true;
-     if(nearestBot===p&&Math.abs(ball.x-p.x)<88&&Math.abs(ball.y-(p.y+p.r))<115)controlKeys[p.hit]=true;
+     if(nearestBot===p&&Math.abs(ball.x-p.x)<125&&Math.abs(ball.y-(p.y+p.r))<145){const nearNet=Math.abs(p.x-NET_X)<190;const ballAbove=ball.y<p.y+p.r-8;const ballLow=ball.y>p.y+p.r-18;if(nearNet&&ballAbove)controlKeys[p.spike]=true;else if(ballLow&&Math.abs(ball.x-p.x)<78)controlKeys[p.feint]=true;else if(ballAbove&&Math.abs(ball.x-p.x)<105)controlKeys[p.set]=true;else controlKeys[p.hit]=true;}if(nearestBot===p&&Math.abs(p.x-NET_X)<135&&ball.y<p.y+15&&p.onGround)controlKeys[p.block]=true;
    }
    if(gameMode==='solo'&&index>0)p.aiKeys=controlKeys;
    p.vx=0;if(controlKeys[p.left])p.vx=-5.3;if(controlKeys[p.right])p.vx=5.3;
@@ -531,8 +531,8 @@ function update(dt){
    if(p.y+p.r*2>=FLOOR){p.y=FLOOR-p.r*2;p.vy=0;p.onGround=true}
    p.hitTimer=Math.max(0,p.hitTimer-step);p.actionTimer=Math.max(0,p.actionTimer-step);p.blockTimer=Math.max(0,p.blockTimer-step);
  });
- ball.vy+=.25*step;ball.x+=ball.vx*step;ball.y+=ball.vy*step;ball.spin+=ball.vx*.012*step;
- if(Math.abs(ball.x-NET_X)<ball.r+7&&ball.y>FLOOR-NET_H-ball.r){if(ball.y<FLOOR-NET_H+8){ball.y=FLOOR-NET_H-ball.r;ball.vy=-Math.abs(ball.vy)*.55}else{ball.x=ball.x<NET_X?NET_X-ball.r-8:NET_X+ball.r+8;ball.vx*=-.65}}
+ rallyTime+=dt;ball.vy+=.25*step;ball.x+=ball.vx*step;ball.y+=ball.vy*step;ball.spin+=ball.vx*.012*step;
+ if(ball.x<COURT_LEFT){point(1);return}if(ball.x>COURT_RIGHT){point(0);return}if(rallyTime>22000){point(ball.x<NET_X?1:0);return}if(Math.abs(ball.x-NET_X)<ball.r+7&&ball.y>FLOOR-NET_H-ball.r){if(ball.y<FLOOR-NET_H+8){ball.y=FLOOR-NET_H-ball.r;ball.vy=-Math.abs(ball.vy)*.55}else{ball.x=ball.x<NET_X?NET_X-ball.r-8:NET_X+ball.r+8;ball.vx*=-.65}}
  activePlayers().forEach(collidePlayer);
  if(ball.y+ball.r>=FLOOR){let winner=ball.x<NET_X?1:0;if(ball.x<COURT_LEFT)winner=1;if(ball.x>COURT_RIGHT)winner=0;point(winner)}
  if(ball.y<0){ball.y=ball.r;ball.vy=Math.abs(ball.vy)*.7}
