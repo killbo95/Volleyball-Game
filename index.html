@@ -500,7 +500,7 @@ function collidePlayer(p){
    if(hitKeys[p.spike])action='spike';else if(hitKeys[p.feint])action='feint';else if(hitKeys[p.set])action='set';else if(hitKeys[p.hit])action='bump';
    if(action){
      p.hitTimer=action==='spike'?28:action==='feint'?22:16;p.actionTimer=action==='spike'?22:14;
-     if(action==='spike'){ball.vx=side*(Math.abs(p.vx)>1?13:11);ball.vy=-12.5;ball.y-=9}
+     if(action==='spike'){ball.vx=side*(Math.abs(p.vx)>1?14.5:13);ball.vy=7.2;ball.y+=5}
      else if(action==='feint'){ball.vx=side*3.2+p.vx*.15;ball.vy=2.4;ball.y+=5}
      else if(action==='set'){ball.vx=side*4.5+p.vx*.15;ball.vy=-13.5}
      else{let nx=dx/(d||1),ny=dy/(d||1);ball.vx=side*Math.max(5,Math.abs(nx*7)+2)+p.vx*.2;ball.vy=Math.min(-7,ny*5-5)}
