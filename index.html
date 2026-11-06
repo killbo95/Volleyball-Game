@@ -418,7 +418,7 @@ const keys={},remoteKeys={};let netRole='offline',peer=null,conn=null,lastSync=0
 const players=[
  {x:210,y:FLOOR-54,vx:0,vy:0,r:27,color:'#55e6df',dark:'#087e9a',left:'a',right:'d',jump:'w',hit:'f',face:1,onGround:true,hitTimer:0,skin:0},
  {x:790,y:FLOOR-54,vx:0,vy:0,r:27,color:'#ff739d',dark:'#b72e65',left:'ArrowLeft',right:'ArrowRight',jump:'ArrowUp',hit:'/',face:-1,onGround:true,hitTimer:0,skin:1},
- {x:970,y:FLOOR-54,vx:0,vy:0,r:27,color:'#ffb45f',dark:'#a85b28',left:'',right:'',jump:'',hit:'',face:-1,onGround:true,hitTimer:0,skin:3}
+ {x:970,y:FLOOR-54,vx:0,vy:0,r:27,color:'#ffb45f',dark:'#a85b28',left:'bot2-left',right:'bot2-right',jump:'bot2-jump',hit:'bot2-hit',face:-1,onGround:true,hitTimer:0,skin:3}
 ];
 const ball={x:300,y:220,vx:4,vy:-2,r:15,spin:0};
 function resetBall(side){serveSide=side;ball.x=side===0?300:780;ball.y=245;ball.vx=side===0?4.2:-4.2;ball.vy=-5.2;ball.spin=0}
