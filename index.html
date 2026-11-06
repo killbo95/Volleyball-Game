@@ -414,7 +414,9 @@ const ball={x:300,y:220,vx:4,vy:-2,r:15,spin:0};
 function resetBall(side){serveSide=side;ball.x=side===0?270:690;ball.y=245;ball.vx=side===0?4.2:-4.2;ball.vy=-5.2;ball.spin=0}
 function resetPlayers(){players[0].x=235;players[1].x=725;for(const p of players){p.y=FLOOR-p.r*2;p.vx=p.vy=0;p.onGround=true;p.hitTimer=0}}
 function show(title,text,button='PLAY AGAIN'){document.getElementById('modalTitle').textContent=title;document.getElementById('modalText').textContent=text;document.getElementById('startBtn').textContent=button;overlay.style.display='grid'}
-function start(){document.getElementById('lobbyScreen').style.display='none';document.getElementById('gamebox').style.display='block';if(matchOver){score=[0,0];matchOver=false}resetPlayers();resetBall(serveSide);running=true;paused=false;overlay.style.display='none';last=performance.now();if(netRole==='host'&&conn&&conn.open)conn.send({type:'start'})}
+let enteringMatch=false;
+function enterMatch(onReady){if(enteringMatch)return;enteringMatch=true;const lobby=document.getElementById('lobbyScreen'),gamebox=document.getElementById('gamebox');document.body.classList.add('match-entering');lobby.classList.add('lobby-exit');setTimeout(()=>{lobby.style.display='none';lobby.classList.remove('lobby-exit');gamebox.style.display='block';gamebox.classList.add('game-enter');requestAnimationFrame(()=>{gamebox.classList.add('game-enter-active');setTimeout(()=>{gamebox.classList.remove('game-enter','game-enter-active');document.body.classList.remove('match-entering');enteringMatch=false;if(onReady)onReady()},650)})},420)}
+function start(){enterMatch(()=>{if(matchOver){score=[0,0];matchOver=false}resetPlayers();resetBall(serveSide);running=true;paused=false;overlay.style.display='none';last=performance.now();if(netRole==='host'&&conn&&conn.open)conn.send({type:'start'})})}
 document.getElementById('startBtn').onclick=start;document.getElementById('lobbyPlay').onclick=start;
 function updateLobbyCharacters(){const hero=document.getElementById('lobbyChar1');if(hero)hero.style.setProperty('--skin',players[0].skin);const second=document.getElementById('lobbyChar2');if(second)second.style.setProperty('--skin',players[1].skin)}
 document.getElementById('p1skin').addEventListener('change',e=>{players[0].skin=Number(e.target.value);updateLobbyCharacters()});
@@ -427,10 +429,10 @@ function chatLine(who,msg){const d=document.createElement('div');d.textContent=w
 function sendChat(){const input=document.getElementById('chatInput'),msg=input.value.trim();if(!msg||!conn||!conn.open)return;conn.send({type:'chat',msg});chatLine('You',msg);input.value=''}
 document.getElementById('sendChat').onclick=sendChat;document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
 function syncState(){if(netRole!=='host'||!conn||!conn.open)return;conn.send({type:'state',players:players.map(p=>({x:p.x,y:p.y,face:p.face,skin:p.skin,hitTimer:p.hitTimer})),ball:{x:ball.x,y:ball.y,vx:ball.vx,vy:ball.vy,spin:ball.spin},score:[...score],running,matchOver})}
-function setupConnection(c,role){conn=c;netRole=role;c.on('open',()=>{status(role==='host'?'Opponent joined. Choose characters, then start the match.':'Connected! Waiting for the host to start.');document.getElementById('onlineStart').disabled=role!=='host'});c.on('data',d=>{if(!d||!d.type)return;if(d.type==='input'&&role==='host'){remoteKeys[d.key]=!!d.down}if(d.type==='chat')chatLine(role==='host'?'Opponent':'Host',String(d.msg||'').slice(0,180));if(d.type==='start'&&role==='guest'){score=[0,0];matchOver=false;running=true;document.getElementById('lobbyScreen').style.display='none';document.getElementById('gamebox').style.display='block';overlay.style.display='none';status('Online match in progress.')}if(d.type==='skin'&&role==='host'){players[1].skin=Math.max(0,Math.min(4,Number(d.skin)||0));document.getElementById('p2skin').value=String(players[1].skin);updateLobbyCharacters()}if(d.type==='state'&&role==='guest'){d.players.forEach((p,i)=>Object.assign(players[i],p));Object.assign(ball,d.ball);score=d.score;running=d.running;matchOver=d.matchOver}});c.on('close',()=>{status('Opponent disconnected.');netRole='offline';conn=null;document.getElementById('onlineStart').disabled=true});c.on('error',()=>status('Connection problem. Check the room code and try again.'))}
+function setupConnection(c,role){conn=c;netRole=role;c.on('open',()=>{status(role==='host'?'Opponent joined. Choose characters, then start the match.':'Connected! Waiting for the host to start.');document.getElementById('onlineStart').disabled=role!=='host'});c.on('data',d=>{if(!d||!d.type)return;if(d.type==='input'&&role==='host'){remoteKeys[d.key]=!!d.down}if(d.type==='chat')chatLine(role==='host'?'Opponent':'Host',String(d.msg||'').slice(0,180));if(d.type==='start'&&role==='guest'){enterMatch(()=>{score=[0,0];matchOver=false;resetPlayers();resetBall(0);running=true;last=performance.now();overlay.style.display='none';status('Online match in progress.')})}if(d.type==='skin'&&role==='host'){players[1].skin=Math.max(0,Math.min(4,Number(d.skin)||0));document.getElementById('p2skin').value=String(players[1].skin);updateLobbyCharacters()}if(d.type==='state'&&role==='guest'){d.players.forEach((p,i)=>Object.assign(players[i],p));Object.assign(ball,d.ball);score=d.score;running=d.running;matchOver=d.matchOver}});c.on('close',()=>{status('Opponent disconnected.');netRole='offline';conn=null;document.getElementById('onlineStart').disabled=true});c.on('error',()=>status('Connection problem. Check the room code and try again.'))}
 document.getElementById('hostBtn').onclick=()=>{if(typeof Peer==='undefined'){status('Could not load online connection service.');return}if(peer)peer.destroy();peer=new Peer();status('Creating private room…');peer.on('open',id=>{codeEl.textContent='ROOM CODE: '+id;status('Room ready. Share this code with one friend.');netRole='host'});peer.on('connection',c=>setupConnection(c,'host'));peer.on('error',()=>status('Could not create room. Try again.'))};
 document.getElementById('joinBtn').onclick=()=>{const id=document.getElementById('joinCode').value.trim();if(!id){status('Enter the room code first.');return}if(typeof Peer==='undefined'){status('Could not load online connection service.');return}if(peer)peer.destroy();peer=new Peer();status('Connecting to private room…');peer.on('open',()=>setupConnection(peer.connect(id,{reliable:true}),'guest'));peer.on('error',()=>status('Could not join. Check the code and try again.'))};
-document.getElementById('onlineStart').onclick=()=>{if(netRole!=='host'||!conn||!conn.open)return;score=[0,0];matchOver=false;serveSide=0;resetPlayers();resetBall(0);running=true;paused=false;document.getElementById('lobbyScreen').style.display='none';document.getElementById('gamebox').style.display='block';overlay.style.display='none';conn.send({type:'start'});status('Online match in progress.')};
+document.getElementById('onlineStart').onclick=()=>{if(netRole!=='host'||!conn||!conn.open)return;enterMatch(()=>{score=[0,0];matchOver=false;serveSide=0;resetPlayers();resetBall(0);running=true;paused=false;overlay.style.display='none';last=performance.now();conn.send({type:'start'});status('Online match in progress.')})};
 document.getElementById('leaveBtn').onclick=()=>{if(conn)conn.close();if(peer)peer.destroy();conn=null;peer=null;netRole='offline';codeEl.textContent='';status('Left the private room.');document.getElementById('onlineStart').disabled=true;chatLog.textContent='Chat appears here when someone joins your room.'};
 document.getElementById('howBtn').onclick=()=>show('HOW TO PLAY','Move to the ball, jump and press your hit key near it. The ball must cross the net and land inside the other side. First to 7 points wins by 2.','GOT IT');
 window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp',' '].includes(e.key))e.preventDefault();if(netRole==='guest'&&conn&&['ArrowLeft','ArrowRight','ArrowUp','/'].includes(e.key)){conn.send({type:'input',key:e.key,down:true});return}keys[e.key]=true;if(e.key==='Escape'&&running){paused=!paused;if(paused)show('PAUSED','Take a breather. Press resume when you are ready.','RESUME');else{overlay.style.display='none';last=performance.now()}}});
@@ -485,5 +487,38 @@ function loop(t){if(!running){if(netRole==='host'&&t-lastSync>55){syncState();la
 draw();requestAnimationFrame(loop);
 })();
 </script>
+<style id="lobby-motion">
+/* Lobby motion and cinematic match launch */
+#lobbyScreen.anime-lobby{animation:lobbyReveal .95s cubic-bezier(.18,.75,.2,1) both}
+#lobbyScreen .anime-hero-character{animation:heroFloat 4.2s ease-in-out infinite;transform-origin:50% 85%}
+#lobbyScreen .anime-character-name{animation:nameReveal .8s .45s both}
+#lobbyScreen .anime-logo{animation:logoReveal .8s .12s both}
+#lobbyScreen .anime-arena-title{animation:logoReveal .8s .3s both}
+#lobbyScreen .anime-credits{animation:creditsReveal 1s .5s both}
+#lobbyScreen .anime-roster{animation:rosterRise .75s .55s both}
+#lobbyScreen .roster-card{transition:transform .22s ease,filter .22s ease,box-shadow .22s ease}
+#lobbyScreen .roster-card:hover{transform:translateY(-9px) scale(1.06);filter:brightness(1.22);box-shadow:0 12px 28px #0009}
+#lobbyScreen .roster-card.selected{animation:selectedPulse 2.8s ease-in-out infinite}
+#lobbyScreen .anime-play{animation:playPulse 2.4s 1s ease-in-out infinite;transition:filter .2s,letter-spacing .2s}
+#lobbyScreen .anime-play:hover{letter-spacing:4px;filter:brightness(1.25)}
+#lobbyScreen .anime-private,#lobbyScreen .anime-chat{animation:drawerReveal .8s .7s both}
+#lobbyScreen.lobby-exit{animation:lobbyExit .42s cubic-bezier(.6,0,.9,.4) both;pointer-events:none}
+#gamebox.game-enter{opacity:0;transform:scale(.94) translateY(22px);filter:blur(8px)}
+#gamebox.game-enter-active{animation:arenaEnter .65s cubic-bezier(.16,.85,.25,1) both}
+body.match-entering:after{content:"";position:fixed;inset:0;z-index:10000;pointer-events:none;background:radial-gradient(circle at 50% 55%,#b9ffff 0%,#65e6df 13%,#14364c 42%,#050a16 78%);animation:matchFlash .72s ease-in-out both}
+@keyframes lobbyReveal{from{opacity:0;transform:scale(1.035);filter:brightness(.5) blur(7px)}to{opacity:1;transform:scale(1);filter:brightness(1) blur(0)}}
+@keyframes heroFloat{0%,100%{translate:0 0}50%{translate:0 -9px}}
+@keyframes nameReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes logoReveal{from{opacity:0;transform:translateY(-14px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes creditsReveal{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes rosterRise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes drawerReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes selectedPulse{0%,100%{box-shadow:0 0 0 1px #8af6ed66}50%{box-shadow:0 0 19px #65e6df88}}
+@keyframes playPulse{0%,100%{box-shadow:0 12px 35px #0009,0 0 0 #65e6df00}50%{box-shadow:0 12px 38px #0009,0 0 28px #65e6df55}}
+@keyframes lobbyExit{to{opacity:0;transform:scale(1.055);filter:blur(10px)}}
+@keyframes arenaEnter{0%{opacity:0;transform:scale(.94) translateY(22px);filter:blur(8px)}70%{opacity:1;filter:blur(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes matchFlash{0%{opacity:0}18%{opacity:.9}55%{opacity:.55}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){#lobbyScreen.anime-lobby,#lobbyScreen .anime-hero-character,#lobbyScreen .anime-character-name,#lobbyScreen .anime-logo,#lobbyScreen .anime-arena-title,#lobbyScreen .anime-credits,#lobbyScreen .anime-roster,#lobbyScreen .roster-card.selected,#lobbyScreen .anime-play,#lobbyScreen .anime-private,#lobbyScreen .anime-chat,#lobbyScreen.lobby-exit,#gamebox.game-enter-active,body.match-entering:after{animation:none!important;transition:none!important}#lobbyScreen .anime-hero-character{translate:0 0}}
+</style>
 </body>
 </html>
